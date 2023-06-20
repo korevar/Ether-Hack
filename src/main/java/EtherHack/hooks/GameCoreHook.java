@@ -33,7 +33,7 @@ public class GameCoreHook {
     }
 
     /**
-     * Determines if the API is ready to be initialized.
+     * Проверяет, готово ли API к инициализации
      */
     private static boolean isReadyToInit() {
         return !UIManager.UI.isEmpty();

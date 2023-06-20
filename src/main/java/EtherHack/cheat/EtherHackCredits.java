@@ -5,7 +5,6 @@ import EtherHack.hooks.IGameCoreListener;
 import EtherHack.utils.Info;
 import EtherHack.utils.Rendering;
 import zombie.core.Core;
-import zombie.core.opengl.RenderSettings;
 
 public class EtherHackCredits implements IGameCoreListener {
 
@@ -21,7 +20,9 @@ public class EtherHackCredits implements IGameCoreListener {
      */
     @Override
     public void onCall(Core self) {
-        Rendering.DrawText(Info.CHEAT_NAME_DISPLAY, 15.0f, 1020.0f, 255.0f, 255.0f, 255.0f, 255.0f);
-        Rendering.DrawText(Info.CHEAT_AUTHOR_DISPLAY, 15.0f, 1035.0f, 255.0f, 255.0f, 255.0f, 255.0f);
+        float screenHeight = (float)self.getScreenHeight();
+
+        Rendering.DrawText(Info.CHEAT_NAME_DISPLAY, 15.0f, screenHeight - 30.0f, 255.0f, 255.0f, 255.0f, 255.0f);
+        Rendering.DrawText(Info.CHEAT_AUTHOR_DISPLAY, 15.0f, screenHeight - 15.0f, 255.0f, 255.0f, 255.0f, 255.0f);
     }
 }

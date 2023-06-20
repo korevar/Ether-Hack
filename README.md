@@ -45,7 +45,7 @@ This tool requires:
 
 ## Usage
 
-Run the `.jar` executable file in the root folder of the game with the `--install` flag and after installation you can run the game
+Run the executable file `.jar` in the root folder of the game with the flag `--install`, and after installation you will be able to launch the game. The game will start with the cheat menu open, you can close it with the `NUM5` key
 
 ## Contributing
 

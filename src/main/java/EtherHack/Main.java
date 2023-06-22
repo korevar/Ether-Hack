@@ -2,11 +2,13 @@ package EtherHack;
 
 import EtherHack.utils.Console;
 
+import java.io.UnsupportedEncodingException;
+
 /**
  * Главный класс EtherHack - точка входа
  */
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws UnsupportedEncodingException {
         if (args.length != 1) {
             Console.Print("You must specify one of the '--install' or '--uninstall' flags");
             return;

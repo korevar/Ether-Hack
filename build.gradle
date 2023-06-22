@@ -33,7 +33,7 @@ dependencies {
 
 jar {
     destinationDirectory = file('build/')
-    archiveFileName = 'EtherHack-0.0.1a.jar'
+    archiveFileName = 'EtherHack-0.0.2a.jar'
 
     manifest {
         attributes 'Main-Class': 'EtherHack.Main'

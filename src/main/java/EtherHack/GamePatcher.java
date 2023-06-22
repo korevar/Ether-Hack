@@ -1,9 +1,9 @@
 package EtherHack;
 
 import EtherHack.utils.Console;
-import EtherHack.cheat.EtherMain;
+import java.net.URLDecoder;
 
-import EtherHack.utils.Info;
+import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.FileUtils;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -94,11 +94,15 @@ public class GamePatcher {
     /**
      * Распаковка файлов чита в директорию игры
      */
-    public void ExtractEtherFiles() {
+    public void ExtractEtherFiles() throws UnsupportedEncodingException {
         Console.Print("Unzipping EtherHack files...");
 
         // Получение пути к текущему исполняемому JAR-файлу
         String jarPath = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+
+        // Декодирование пути
+        jarPath = URLDecoder.decode(jarPath, StandardCharsets.UTF_8);
+
 
         try (ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(jarPath))) {
             ZipEntry entry = zipInputStream.getNextEntry();
@@ -298,7 +302,7 @@ public class GamePatcher {
      * Патчинг игровых bytecode файлов игры
      * для реализации собственного фунционала
      */
-    public void PatchGame() {
+    public void PatchGame() throws UnsupportedEncodingException {
         Console.Print("Preparing to install the EtherHack...");
 
         BackupFiles();

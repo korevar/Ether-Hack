@@ -1,11 +1,23 @@
 package EtherHack.cheat;
 
 import EtherHack.cheat.ui.Window;
+import EtherHack.hooks.GameCoreHook;
+import EtherHack.hooks.IGameCoreListener;
 import org.lwjglx.input.Keyboard;
+import zombie.core.Core;
 import zombie.input.GameKeyboard;
 import zombie.ui.UIManager;
 
-public class EtherGUI {
+import java.util.concurrent.atomic.AtomicBoolean;
+
+public class EtherGUI implements IGameCoreListener {
+    /**
+     * Конструктор, реализующий подписку на события GameCoreHook
+     */
+    public EtherGUI() {
+        GameCoreHook.addListener(this);
+    }
+
     /**
      * Главное окно EtherHack
      */
@@ -17,14 +29,26 @@ public class EtherGUI {
     private boolean isEnableGUI = true;
 
     /**
+     * Проверка, инциализированн ли пользовательский интерфейс
+     */
+    private static final AtomicBoolean isGUIInitialized = new AtomicBoolean(false);
+
+    /**
      * Проверяет была ли нажата кнопка
      */
     private boolean wasButtonDown = false;
 
     /**
+     * Проверяет, готово ли UI API к инициализации
+     */
+    private static boolean isGUIReadyToInit() {
+        return !UIManager.UI.isEmpty();
+    }
+
+    /**
      * Реализация инициализации окна EtherHack
      */
-    public void InitGUI() {
+    public void initGUI() {
         etherWindow = new Window();
         etherWindow.ResizeToFitY = false;
     }
@@ -32,7 +56,8 @@ public class EtherGUI {
     /**
      * Одновление пользовательского окна EtherHack
      */
-    public void UpdateGUI() {
+    private void updateGUI(){
+
         boolean isDown = GameKeyboard.isKeyDown(Keyboard.KEY_NUMPAD5);
 
         if (isDown && !wasButtonDown) {
@@ -51,5 +76,19 @@ public class EtherGUI {
 
         etherWindow.visible = isEnableGUI;
         etherWindow.setEnabled(isEnableGUI);
+    }
+
+    /**
+     * Реализация функционала при вызове хука GameCoreHook
+     */
+    @Override
+    public void onCall(Core self) {
+        if (isGUIReadyToInit()) {
+            if (isGUIInitialized.compareAndSet(false, true)) {
+                initGUI();
+            }
+
+            updateGUI();
+        }
     }
 }

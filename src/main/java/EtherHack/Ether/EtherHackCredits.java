@@ -22,7 +22,7 @@ public class EtherHackCredits implements IGameCoreListener {
     public void onCall(Core self) {
         float screenHeight = (float)self.getScreenHeight();
 
-        Rendering.DrawText(Info.CHEAT_NAME_DISPLAY, 15.0f, screenHeight - 30.0f, 255.0f, 255.0f, 255.0f, 255.0f);
-        Rendering.DrawText(Info.CHEAT_AUTHOR_DISPLAY, 15.0f, screenHeight - 15.0f, 255.0f, 255.0f, 255.0f, 255.0f);
+        Rendering.DrawText(Info.CHEAT_CREDITS_TITLE, 15.0f, screenHeight - 30.0f, 255.0f, 255.0f, 255.0f, 255.0f);
+        Rendering.DrawText(Info.CHEAT_CREDITS_AUTHOR, 15.0f, screenHeight - 15.0f, 255.0f, 255.0f, 255.0f, 255.0f);
     }
 }

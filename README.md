@@ -60,9 +60,14 @@ This section will provide information on how to get a local copy of the project 
 ### Prerequisites
 
 This tool requires:
+<<<<<<< HEAD
 
 -   [Java 17](https://www.oracle.com/java/technologies/downloads/) or newer
 -   Steam copy of [Project Zomboid](https://store.steampowered.com/app/108600/Project_Zomboid/)
+=======
+- [Java 17](https://www.oracle.com/java/technologies/downloads/) or newer
+- Steam copy of [Project Zomboid](https://store.steampowered.com/app/108600/Project_Zomboid/)
+>>>>>>> eb7da5523c2fd3de18e12c589ebf7c3113a14a41
 
 ### Installation
 

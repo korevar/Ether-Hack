@@ -10,6 +10,9 @@
 This is a cheat written in Java(API) and LUA(GUI) for Project Zomboid. It is aimed at providing the game with additional functionality that allows users to get some benefits. Please use responsibly and understand the consequences that may arise as a result of improper use.
 The performance of the cheat was tested on the latest version of the game `41.78.16 (Steam)` (July 05, 2023).
 
+You can watch the cheat [installation video](https://www.youtube.com/watch?v=Olx7O3HyeZc) and see its main functions in action.
+
+Also, if desired, you can provide [support <3](https://www.donationalerts.com/r/quzile)
 ## Table of Contents
 - [Cheat functionality](#cheat-functionality)
 - [Demo](#demo)

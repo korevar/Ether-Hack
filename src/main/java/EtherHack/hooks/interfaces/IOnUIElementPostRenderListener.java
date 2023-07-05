@@ -1,5 +1,5 @@
 package EtherHack.hooks.interfaces;
 
-public interface IOnUIElementPastRenderListener {
+public interface IOnUIElementPostRenderListener {
     void onCall();
 }

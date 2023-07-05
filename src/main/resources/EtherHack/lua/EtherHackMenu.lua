@@ -41,6 +41,10 @@ EHMenu.API = {
             end
 		end
     end,
+    -- Включение режима разработки
+    setDebugBypass = function(changeOptionTarget, joypadIndex, isSelected)
+        setEtherBypassDebugMode(isSelected);
+    end,
 
     -- Получение прав администратора
     setAdminAccess = function()
@@ -49,35 +53,36 @@ EHMenu.API = {
 
     -- Выдача предметов
     addItem = function(id, amount)
-        addEtherItem(id, amount);
+        getPlayer():getInventory():AddItems(id, amount);
     end,
 
     -- Метод для переключения состояния "Invisible"
     toggleInvisible = function(changeOptionTarget, joypadIndex, isSelected)
         if not isEtherInGame() or getPlayer() == nil then return end
         getPlayer():setInvisible(isSelected);
-        EHMenu.API.checkboxStates.Invisible = isSelected;
     end,
 
     -- Метод для переключения состояния "GodMode"
-    toggleGodMode= function(changeOptionTarget, joypadIndex, isSelected)
+    toggleGodMode = function(changeOptionTarget, joypadIndex, isSelected)
         if not isEtherInGame() or getPlayer() == nil then return end
         getPlayer():setGodMod(isSelected);
-        EHMenu.API.checkboxStates.GodMode = isSelected;
     end,
 
     -- Метод для переключения состояния "GhostMode"
-    toggleGhostMode= function(changeOptionTarget, joypadIndex, isSelected)
+    toggleGhostMode = function(changeOptionTarget, joypadIndex, isSelected)
         if not isEtherInGame() or getPlayer() == nil then return end
         getPlayer():setGhostMode(isSelected);
-        EHMenu.API.checkboxStates.GhostMode = isSelected;
     end,
 
     -- Метод для переключения состояния "NoClip"
-    toggleNoClip= function(changeOptionTarget, joypadIndex, isSelected)
+    toggleNoClip = function(changeOptionTarget, joypadIndex, isSelected)
         if not isEtherInGame() or getPlayer() == nil then return end
         getPlayer():setNoClip(isSelected);
-        EHMenu.API.checkboxStates.NoClip = isSelected;
+    end,
+
+    -- Установка всех навыков на максимальный уровень
+    setMaxDefaultSkill = function()
+        setEtherMaxDefaultSkill();
     end,
 };
 
@@ -97,7 +102,7 @@ function EHMenu:new()
     local menuTableData = {};
 
     local width = 200;
-    local height = 255;
+    local height = 345;
 
     local positionX = getCore():getScreenWidth() / 2 - width /2;
     local positionY = getCore():getScreenHeight() / 2 - height /2;
@@ -117,7 +122,9 @@ end
 function EHMenu:update()
     if not EHMenu.API.isEtherInGame() or getPlayer() == nil then
         for id, item in pairs(self.checkboxes) do
-            item.enable = false;
+            if item.isOnlyInGame then
+                item.enable = false;
+            end
         end
     end
 end
@@ -132,7 +139,7 @@ end
 --*********************************************************
 --* Добавление чекбоксов по вертикали
 --*********************************************************
-function EHMenu:addVerticalCheckBox(option, id, method, isSelected)
+function EHMenu:addVerticalCheckBox(option, id, method, isSelected, isOnlyInGame)
     local checkboxY = 20 + (#self.checkboxes * 20);
 
     local tick = ISTickBox:new(10, checkboxY, 100, 50, id, self, method);
@@ -143,6 +150,7 @@ function EHMenu:addVerticalCheckBox(option, id, method, isSelected)
     tick:setAnchorTop(false);
     tick:setAnchorBottom(true);
     tick.selected[1] = isSelected;
+    tick.isOnlyInGame = isOnlyInGame;
     self:addChild(tick);
     tick:addOption(option);
 
@@ -191,16 +199,18 @@ end
 function EHMenu:createChildren()
     ISCollapsableWindow.createChildren(self);
 
-    self:addVerticalCheckBox("Invisible","Invisible", EHMenu.API.toggleInvisible, getPlayer() and getPlayer():isInvisible() or false);
-    self:addVerticalCheckBox("God Mode", "GodMode", EHMenu.API.toggleGodMode, getPlayer() and getPlayer():isGodMod() or false);
-    self:addVerticalCheckBox("Ghost Mode", "GhostMode", EHMenu.API.toggleGhostMode, getPlayer() and getPlayer():isGhostMode() or false);
-    self:addVerticalCheckBox("No Clip", "NoClip", EHMenu.API.toggleNoClip, getPlayer() and getPlayer():isNoClip() or false);
-
+    self:addVerticalCheckBox("Debug Mode Bypass","DebugModeBypass", EHMenu.API.setDebugBypass, isEtherBypassDebugMode() or false, false);
+    self:addVerticalCheckBox("Invisible","Invisible", EHMenu.API.toggleInvisible, getPlayer() and getPlayer():isInvisible() or false, true);
+    self:addVerticalCheckBox("God Mode", "GodMode", EHMenu.API.toggleGodMode, getPlayer() and getPlayer():isGodMod() or false, true);
+    self:addVerticalCheckBox("Ghost Mode", "GhostMode", EHMenu.API.toggleGhostMode, getPlayer() and getPlayer():isGhostMode() or false, true);
+    self:addVerticalCheckBox("No Clip", "NoClip", EHMenu.API.toggleNoClip, getPlayer() and getPlayer():isNoClip() or false, true);
 
     self:addVerticalButton("Give Profession Points (beta)", "GiveProfessionPoints", self.width - 20, 30, function() EHMenu.API.addProfessionPoint(100) end, false)
+    self:addVerticalButton("Set Max Default Skill", "SetMaxDefaultSkill", self.width - 20, 30, function() EHMenu.API.setMaxDefaultSkill() end, true)
     self:addVerticalButton("Get Admin Access", "SetAdminAccess", self.width - 20, 30, function() EHMenu.API.setAdminAccess() end, true)
-    self:addVerticalButton("Items Creator", "ItemCreator", self.width - 20, 30, function() EHMenu.API.addItem("Base.Katana", 1) end, false)
-    self:addVerticalButton("Player Settings", "PlayerSettings", self.width - 20, 30, function() EHMenu.API.addItem("Base.Katana", 1) end, false)
+    self:addVerticalButton("Items Creator", "ItemCreator", self.width - 20, 30, function() ISItemsListViewer.OnOpenPanel() end, true)
+    self:addVerticalButton("Player Editor", "PlayerEditor", self.width - 20, 30, function() EHPlayerStatMenu.OnOpenPanel() end, true)
+    self:addVerticalButton("Game Debug Menu", "GameDebugMenu", self.width - 20, 30, function() ISGeneralDebug.OnOpenPanel() end, true)
 end
 
 --*********************************************************
@@ -230,3 +240,41 @@ function EHMenu.onOpenAndCloseMenu(key)
 end
 
 Events.OnKeyPressed.Add(EHMenu.onOpenAndCloseMenu)
+
+--*********************************************************
+--* Override
+--*********************************************************
+EHPlayerStatMenu = ISPlayerStatsUI:derive("EHPlayerStatMenu");
+
+function EHPlayerStatMenu:updateButtons()
+    local buttonEnable = true;
+    self.addTraitBtn.enable = buttonEnable;
+    self.changeProfession.enable = buttonEnable;
+    self.changeForename.enable = buttonEnable;
+    self.changeSurname.enable = buttonEnable;
+    --    self.addGlobalXP.enable = buttonEnable;
+    self.muteAllBtn.enable = buttonEnable;
+    self.addXpBtn.enable = buttonEnable;
+    self.addLvlBtn.enable = buttonEnable and (self.selectedPerk ~= nil)
+    self.loseLvlBtn.enable = buttonEnable and (self.selectedPerk ~= nil)
+    self.userlogBtn.enable = buttonEnable;
+    self.manageInvBtn.enable = buttonEnable;
+    self.warningPointsBtn.enable = buttonEnable;
+    self.changeAccessLvlBtn.enable = (self.admin:getAccessLevel() == "Admin" or self.admin:getAccessLevel() == "Moderator") and self:canModifyThis();
+    self.changeUsernameBtn.enable = buttonEnable;
+    for _,image in ipairs(self.traits) do
+        self.traitsRemoveButtons[image.label].enable = buttonEnable;
+    end
+end
+
+function EHPlayerStatMenu.OnOpenPanel()
+    if EHPlayerStatMenu.instance then
+        EHPlayerStatMenu.instance:close()
+    end
+    local x = getCore():getScreenWidth() / 2 - (800 / 2);
+    local y = getCore():getScreenHeight() / 2 - (800 / 2);
+    local ui = EHPlayerStatMenu:new(x,y - 100,800,800, getPlayer(), getPlayer())
+    ui:initialise();
+    ui:addToUIManager();
+    ui:setVisible(true);
+end

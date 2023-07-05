@@ -1,13 +1,11 @@
-package EtherHack.cheat;
-
-import java.util.concurrent.atomic.AtomicBoolean;
+package EtherHack.Ether;
 
 public class EtherMain {
 
     private static EtherMain instance;
     public EtherHackCredits etherHackCredits;
     public EtherGUI etherGUI;
-    private static final AtomicBoolean isInitialized = new AtomicBoolean(false);
+    public EtherAPI etherAPI;
 
     /**
      * Предотвращение создание экземпляров из вне
@@ -21,6 +19,7 @@ public class EtherMain {
     public void initEther(){
         etherHackCredits = new EtherHackCredits();
         etherGUI = new EtherGUI();
+        etherAPI = etherGUI.etherAPI;
     }
 
     /**

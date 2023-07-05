@@ -1,94 +1,65 @@
-package EtherHack.cheat;
+package EtherHack.Ether;
 
-import EtherHack.cheat.ui.Window;
-import EtherHack.hooks.GameCoreHook;
-import EtherHack.hooks.IGameCoreListener;
+import EtherHack.hooks.OnUIElementPostRenderHook;
+import EtherHack.hooks.interfaces.IOnUIElementPostRenderListener;
+import EtherHack.utils.Logger;
 import org.lwjglx.input.Keyboard;
+import zombie.Lua.LuaManager;
 import zombie.core.Core;
 import zombie.input.GameKeyboard;
-import zombie.ui.UIManager;
+import zombie.network.GameClient;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class EtherGUI implements IGameCoreListener {
+public class EtherGUI implements IOnUIElementPostRenderListener {
+    public EtherAPI etherAPI;
+
     /**
-     * Конструктор, реализующий подписку на события GameCoreHook
+     * Путь до главного файла UI
+     */
+    private final String PATH_LUA_UI_MAIN = "EtherHack/lua/EtherHackMenu.lua";
+
+    /**
+     * Флаг, был ли загружен API EtherHack
+     */
+    private AtomicBoolean isAPIInitialized = new AtomicBoolean(false);
+
+
+    /**
+     * Конструктор, реализующий подписку на события OnUIElementPostRender
      */
     public EtherGUI() {
-        GameCoreHook.addListener(this);
+        OnUIElementPostRenderHook.addListener(this);
+        etherAPI = new EtherAPI();
     }
 
     /**
-     * Главное окно EtherHack
+     * Компиляция UI Lua
      */
-    private Window etherWindow;
-
-    /**
-     * Флаг показа окна
-     */
-    private boolean isEnableGUI = true;
-
-    /**
-     * Проверка, инциализированн ли пользовательский интерфейс
-     */
-    private static final AtomicBoolean isGUIInitialized = new AtomicBoolean(false);
-
-    /**
-     * Проверяет была ли нажата кнопка
-     */
-    private boolean wasButtonDown = false;
-
-    /**
-     * Проверяет, готово ли UI API к инициализации
-     */
-    private static boolean isGUIReadyToInit() {
-        return !UIManager.UI.isEmpty();
-    }
-
-    /**
-     * Реализация инициализации окна EtherHack
-     */
-    public void initGUI() {
-        etherWindow = new Window();
-        etherWindow.ResizeToFitY = false;
-    }
-
-    /**
-     * Одновление пользовательского окна EtherHack
-     */
-    private void updateGUI(){
-
-        boolean isDown = GameKeyboard.isKeyDown(Keyboard.KEY_NUMPAD5);
-
-        if (isDown && !wasButtonDown) {
-            isEnableGUI = !isEnableGUI;
+    public void loadLuaUI(){
+        if(!LuaManager.loaded.contains(PATH_LUA_UI_MAIN)){
+            Logger.printLog("Loading EtherHackUI...");
+            LuaManager.RunLua(PATH_LUA_UI_MAIN, false);
         }
-
-        wasButtonDown = isDown;
-
-        if (!UIManager.UI.contains(etherWindow)) {
-            UIManager.UI.add(etherWindow);
-        }
-
-        if (UIManager.UI.contains(etherWindow) && !isEnableGUI) {
-            UIManager.UI.remove(etherWindow);
-        }
-
-        etherWindow.visible = isEnableGUI;
-        etherWindow.setEnabled(isEnableGUI);
     }
-
     /**
-     * Реализация функционала при вызове хука GameCoreHook
+     * Реализация функционала при вызове хука OnUIElementPostRender
      */
     @Override
-    public void onCall(Core self) {
-        if (isGUIReadyToInit()) {
-            if (isGUIInitialized.compareAndSet(false, true)) {
-                initGUI();
-            }
-
-            updateGUI();
+    public void onCall() {
+        if (isAPIInitialized.compareAndSet(false, true) || (isAPIInitialized.get() && !LuaManager.loaded.contains(PATH_LUA_UI_MAIN))){
+            Logger.printLog("Initializing EtherAPI...");
+            etherAPI.init();
         }
+
+        /**
+         * Дебаг режима в мультиплеере
+         */
+        Core.bDebug = GameClient.bIngame && etherAPI.isBypassDebugMode;
+
+        loadLuaUI();
+
     }
+
+
 }

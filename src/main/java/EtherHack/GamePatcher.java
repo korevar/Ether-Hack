@@ -1,360 +1,342 @@
 package EtherHack;
 
-import EtherHack.utils.Console;
-import java.net.URLDecoder;
-
-import java.nio.charset.StandardCharsets;
-import org.apache.commons.io.FileUtils;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
+import EtherHack.utils.Logger;
+import EtherHack.utils.Info;
+import EtherHack.utils.Patch;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.nio.file.StandardCopyOption;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  * Класс, отвечающий за установку и удаление чита из кодов игры
  */
 public class GamePatcher {
 
-    private final List<String> backupFilesList = Arrays.asList("GameWindow.class", "core/Core.class", "network/GameServer.class");
+    /**
+     * Список всех файлов, подлежащих инъекции
+     */
+    private final String[] PATCH_FILES = new String[]{"GameWindow.class", "ui/UIManager.class"};
 
     /**
-     * Создание бэкап файла по заданному пути
-     * @param originalPath путь до файда .class
+     * Название игровой папки с .class файлами
      */
-    private void CreateBackupFile(Path originalPath) {
+    private final String GAME_CLASS_FOLDER = "zombie";
+
+    /**
+     * Папки и файлы, которые нужно экспортировать в корневую директорию игры
+     */
+    private final String[] WHITELIST_EXTRACT_AND_DELETE_PATH = new String[]{"com/zwitserloot",
+            "Class50", "EtherHack", "lombok", "org/objectweb", "project.properties"
+    };
+
+    /**
+     * Экспортирование файлов EtherHack в корневую директорию игры
+     */
+    public void extractEtherHack() {
         try {
-            Path backupPath = Paths.get(originalPath.toString() + ".bkup");
+            // Получаем местоположение запущенного JAR файла
+            String jarFilePath = Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
 
-            if (Files.exists(backupPath)) {
-                Console.Print("Backup of the file already exists. Skipping backup.");
-                return;
-            }
+            // Открываем текущий JAR-файл
+            try (JarFile jarFile = new JarFile(jarFilePath)) {
+                // Получаем все записи из JAR-файла
+                Enumeration<JarEntry> entries = jarFile.entries();
 
-            Files.copy(originalPath, backupPath);
-        } catch (IOException e) {
-            Console.Print("Error while creating backup file: " + e.getMessage());
-        }
-    }
+                // Получаем текущую директорию
+                Path currentDirectory = Paths.get(System.getProperty("user.dir"));
 
-    /**
-     * Создание бэкап файлов перед внесением изменений
-     */
-    public void BackupFiles(){
-        Console.Print("Creating backup files...");
+                // Проходим по каждой записи в JAR-файле
+                while (entries.hasMoreElements()) {
+                    JarEntry entry = entries.nextElement();
 
-        try {
-            for (int i = 0; i < backupFilesList.size(); i++) {
-                String iteration = "[" + (i+1) + "/" + backupFilesList.size() + "]";
-                Console.Print( "Creating a backup file '" + backupFilesList.get(i) + "' " + iteration);
+                    // Проверяем, что запись находится в белом списке
+                    if (isInWhitelist(entry.getName())) {
+                        // Создаем путь для извлечения файла
+                        Path extractPath = currentDirectory.resolve(entry.getName());
 
-                Path currentPath = Paths.get("").toAbsolutePath();
-                Path backupFilePath = Paths.get(currentPath.toString(), "zombie", backupFilesList.get(i));
-
-                if (Files.exists(backupFilePath)) {
-                    CreateBackupFile(backupFilePath);
-                } else {
-                    Console.Print(backupFilesList.get(i) + " file not found.");
-                }
-            }
-
-        } catch (Exception e) {
-            Console.Print("Error while backing up files: " + e.getMessage());
-        }
-    }
-
-
-    /**
-     * Добавление аннотации Injected к изменяемому методу
-     * @param classNode Узел всех классов bytecode'a
-     * @param methodName Название изменяемого метода
-     */
-    private void AddAnnotation(ClassNode classNode, String methodName){
-        // Поиск и добавление аннотации в метод
-        for (MethodNode method : classNode.methods) {
-            if (method.name.equals(methodName)) {
-                if (method.visibleAnnotations == null) {
-                    method.visibleAnnotations = new LinkedList<>();
-                }
-                AnnotationNode annotationNode = new AnnotationNode("LEtherHack/annotations/Injected;");
-                method.visibleAnnotations.add(annotationNode);
-            }
-        }
-    }
-
-    /**
-     * Распаковка файлов чита в директорию игры
-     */
-    public void ExtractEtherFiles() throws UnsupportedEncodingException {
-        Console.Print("Unzipping EtherHack files...");
-
-        // Получение пути к текущему исполняемому JAR-файлу
-        String jarPath = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-
-        // Декодирование пути
-        jarPath = URLDecoder.decode(jarPath, StandardCharsets.UTF_8);
-
-
-        try (ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(jarPath))) {
-            ZipEntry entry = zipInputStream.getNextEntry();
-
-            // Удаление существующих папок
-            deleteExistingDirectories();
-
-            while (entry != null) {
-                String entryName = entry.getName();
-
-                // Проверка, является ли папка из белого списка
-                if (isAllowedDirectory(entryName)) {
-                    // Создание выходного потока для разархивации файла
-                    File outputFile = new File(entryName);
-                    if (entry.isDirectory()) {
-                        outputFile.mkdirs();
-                    } else {
-                        outputFile.getParentFile().mkdirs();
-                        try (OutputStream outputStream = new FileOutputStream(outputFile)) {
-                            byte[] buffer = new byte[1024];
-                            int length;
-                            while ((length = zipInputStream.read(buffer)) > 0) {
-                                outputStream.write(buffer, 0, length);
+                        // Если запись - директория, создаем пустую директорию
+                        if (entry.isDirectory()) {
+                            Files.createDirectories(extractPath);
+                        } else {
+                            // Если запись - файл, копируем его содержимое
+                            try (InputStream inputStream = jarFile.getInputStream(entry)) {
+                                Files.copy(inputStream, extractPath, StandardCopyOption.REPLACE_EXISTING);
                             }
                         }
                     }
                 }
-
-                zipInputStream.closeEntry();
-                entry = zipInputStream.getNextEntry();
             }
-        } catch (IOException e) {
-            Console.Print("An error occurred while unzipping EtherHack files: " + e.getMessage());
+
+            Logger.print("Extraction completed successfully");
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
         }
     }
 
     /**
-     * Удаление папок внутри директории, название которых совпадает с разархивированными
+     *Проверяет, находится ли запись в белом списке.
+     * @param entryName путь и имя записи в JAR-файле
+     * @return {@code true}, если запись находится в белом списке, иначе {@code false}
      */
-    private void deleteExistingDirectories() {
-        String[] directoriesToDelete = {"EtherHack", "Class50", "lombok"};
-        String currentDirectoryPath = System.getProperty("user.dir");
-
-        for (String directory : directoriesToDelete) {
-            File directoryToDelete = new File(currentDirectoryPath, directory);
-            if (directoryToDelete.exists()) {
-                try {
-                    FileUtils.deleteDirectory(directoryToDelete);
-                    Console.Print("Deleted existing directory: " + directory);
-                } catch (IOException e) {
-                    Console.Print("An error occurred while deleting the existing directory: " + directory + ", " + e.getMessage());
-                }
-            }
-        }
-    }
-
-    /**
-     * Провера на принадлежность папки в текущем .jar к белому списку
-     * @param path Путь до папки
-     * @return true - является, false - нет
-     */
-    private boolean isAllowedDirectory(String path) {
-        String[] allowedDirectories = {"EtherHack", "com", "Class50", "lombok"};
-        for (String directory : allowedDirectories) {
-            if (path.startsWith(directory + "/") || path.equals(directory)) {
+    private boolean isInWhitelist(String entryName) {
+        // Проверяем, что запись находится в белом списке
+        for (String whitelistEntry : WHITELIST_EXTRACT_AND_DELETE_PATH) {
+            if (entryName.startsWith(whitelistEntry)) {
                 return true;
             }
         }
         return false;
     }
 
+    /**
+     *  Удаление всех экспортированных файлов EtherHack из директории игры
+     */
+    public void uninstallEtherHackFiles() {
+        Logger.print("Deleting all EtherHack files...");
+        try {
+            // Получаем текущую директорию
+            Path currentDirectory = Paths.get(System.getProperty("user.dir"));
+
+            // Проходим по каждому элементу в белом списке
+            for (String deletePath : WHITELIST_EXTRACT_AND_DELETE_PATH) {
+                Path targetPath = currentDirectory.resolve(deletePath);
+
+                // Удаляем папки и файлы, если они существуют
+                if (Files.exists(targetPath)) {
+                    if (Files.isDirectory(targetPath)) {
+                        deleteDirectory(targetPath);
+                    } else {
+                        Files.delete(targetPath);
+                    }
+                }
+            }
+
+            Logger.print("Deletion EtherHack files completed successfully");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+    *
+     * Рекурсивно удаляет папку и ее содержимое.
+     * @param directoryPath путь к удаляемой папке
+     */
+    private void deleteDirectory(Path directoryPath) throws IOException {
+        // Рекурсивное удаление папки и ее содержимого
+        Files.walk(directoryPath)
+                .sorted(Comparator.reverseOrder())
+                .map(Path::toFile)
+                .forEach(File::delete);
+    }
+
+    /**
+     * Создает резервные копии игровых файлов, если они еще не существуют.
+     * Файлы будут сохранены с расширением .bkup в той же папке, что и оригиналы.
+     */
+    public void backupGameFiles() {
+        Path currentPath = Paths.get("").toAbsolutePath();
+
+        for (int i = 0; i < PATCH_FILES.length; i++) {
+            String iteration = "[" + (i + 1) + "/" + PATCH_FILES.length + "]";
+            Logger.print("Creating a backup file '" + PATCH_FILES[i] + "' " + iteration);
+
+            Path originalFilePath = Paths.get(currentPath.toString(), GAME_CLASS_FOLDER, PATCH_FILES[i]);
+
+            if (Files.exists(originalFilePath)) {
+                try {
+                    Path backupFilePath = Paths.get(originalFilePath.toString() + ".bkup");
+
+                    if (Files.exists(backupFilePath)) {
+                        Logger.print("Backup of the file already exists. Skipping backup.");
+                    } else {
+                        Files.copy(originalFilePath, backupFilePath);
+                    }
+                } catch (IOException e) {
+                    Logger.print("Error while creating backup file: " + e.getMessage());
+                }
+            } else {
+                Logger.print(PATCH_FILES[i] + " file not found.");
+            }
+        }
+
+        Logger.print("Backups of game files have been completed!");
+    }
 
     /**
      * Внедрение в файл игрового окна
      */
-    public void PatchGameWindow() {
-        Console.Print("Embedding a game window into a file");
+    public void patchGameWindow() {
+        Patch.injectIntoClass("zombie/GameWindow", "InitDisplay",true, method -> {
+            String oldTitle = "Project Zomboid";
+            String newTitle = "Project Zomboid" + Info.CHEAT_WINDOW_TITLE_SUFFIX;
 
-        String className = "zombie/GameWindow";
-        String methodName = "InitDisplay";
-        String oldTitle = "Project Zomboid";
-        String newTitle = "Project Zomboid by EtherHack";
-
-        try {
-            // Чтение класса
-            ClassNode classNode = new ClassNode();
-            ClassReader classReader = new ClassReader(className);
-            classReader.accept(classNode, 0);
-
-            // Добавляем аннотацию
-            AddAnnotation(classNode, methodName);
-
-            // Поиск и замена строки в методах
-            for (MethodNode method : classNode.methods) {
-                if (method.name.equals(methodName)) {
-                    for (AbstractInsnNode insn : method.instructions.toArray()) {
-                        if (insn instanceof LdcInsnNode) {
-                            LdcInsnNode ldcInsnNode = (LdcInsnNode) insn;
-                            if (ldcInsnNode.cst.equals(oldTitle)) {
-                                ldcInsnNode.cst = newTitle;
-                            }
-                        }
+            // Замена строки в методе
+            for (AbstractInsnNode insn : method.instructions.toArray()) {
+                if (insn instanceof LdcInsnNode ldcInsnNode) {
+                    if (ldcInsnNode.cst.equals(oldTitle)) {
+                        ldcInsnNode.cst = newTitle;
                     }
-
-                    // Создание нового вызова метода
-                    MethodInsnNode initEtherMain = new MethodInsnNode(
-                            Opcodes.INVOKESTATIC,
-                            "EtherHack/cheat/EtherMain",
-                            "getInstance",
-                            "()LEtherHack/cheat/EtherMain;",
-                            false
-                    );
-
-                    // Вставка нового вызова в конец метода
-                    method.instructions.insert(initEtherMain);
                 }
             }
-
-            // Запись изменений
-            ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-            classNode.accept(classWriter);
-            byte[] modifiedClass = classWriter.toByteArray();
-
-            // Запись измененного класса обратно в файл
-            try (FileOutputStream fos = new FileOutputStream(className + ".class")) {
-                fos.write(modifiedClass);
-            }
-
-        } catch (IOException e) {
-            Console.Print("An error occurred while embedding the game window: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Внедрение в файл игрового ядра
-     */
-    public void PatchGameCore() {
-        Console.Print("Embedding a game core into a file");
-
-        String className = "zombie/core/Core";
-        String methodName = "EndFrameUI";
-
-        try {
-            // Чтение класса
-            ClassNode classNode = new ClassNode();
-            ClassReader classReader = new ClassReader(className);
-            classReader.accept(classNode, 0);
-
-            // Добавляем аннотацию
-            AddAnnotation(classNode, methodName);
-
-            // Поиск и вставка вызова в начало метода
-            for (MethodNode method : classNode.methods) {
-                if (method.name.equals(methodName)) {
-                    // Добавление операции загрузки ссылки на 'this'
-                    VarInsnNode loadThis = new VarInsnNode(Opcodes.ALOAD, 0);
-                    method.instructions.insert(loadThis);
-
-                    // Создание нового вызова метода
-                    MethodInsnNode newCall = new MethodInsnNode(
-                            Opcodes.INVOKESTATIC,
-                            "EtherHack/hooks/GameCoreHook",
-                            "Call",
-                            "(Lzombie/core/Core;)V",
-                            false
-                    );
-
-                    // Вставка нового вызова после загрузки 'this'
-                    method.instructions.insert(loadThis, newCall);
-                }
-            }
-
-            // Запись изменений
-            ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-            classNode.accept(classWriter);
-            byte[] modifiedClass = classWriter.toByteArray();
-
-            // Запись измененного класса обратно в файл
-            try (FileOutputStream fos = new FileOutputStream(className + ".class")) {
-                fos.write(modifiedClass);
-            }
-        } catch (IOException e) {
-            Console.Print("An error occurred while embedding the game core: " + e.getMessage());
-        }
+            // Внедрение вызова EtherMain.getInstance().initEther()
+            InsnList initEtherInstructions = new InsnList();
+            initEtherInstructions.add(new MethodInsnNode(
+                    Opcodes.INVOKESTATIC,
+                    "EtherHack/Ether/EtherMain",
+                    "getInstance",
+                    "()LEtherHack/Ether/EtherMain;",
+                    false
+            ));
+            initEtherInstructions.add(new MethodInsnNode(
+                    Opcodes.INVOKEVIRTUAL,
+                    "EtherHack/Ether/EtherMain",
+                    "initEther",
+                    "()V",
+                    false
+            ));
+            method.instructions.insert(initEtherInstructions);
+        });
     }
 
 
     /**
-     * Внедрение в файл игровоой сетевой логики
+     * Внедрение в файл UIManager
      */
-    public void PatchGameNetwork() {
-        Console.Print("Embedding a game network into a file");
-        //TODO: Do...
+    public void patchUIManager() {
+        Patch.injectIntoClass("zombie/ui/UIManager", "render", true, method -> {
+            // Создание нового вызова метода PreRender
+            MethodInsnNode PreRenderHook = new MethodInsnNode(
+                    Opcodes.INVOKESTATIC,
+                    "EtherHack/hooks/OnUIElementPreRenderHook",
+                    "call",
+                    "()V",
+                    false
+            );
+
+            // Создание нового вызова метода PostRender
+            MethodInsnNode PostRenderHook = new MethodInsnNode(
+                    Opcodes.INVOKESTATIC,
+                    "EtherHack/hooks/OnUIElementPostRenderHook",
+                    "call",
+                    "()V",
+                    false
+            );
+
+            // Поиск вызова LuaEventManager.triggerEvent("OnPreUIDraw")
+            Patch.insertHookForEventTrigger(method, "OnPreUIDraw", PreRenderHook , true);
+
+            // Поиск вызова LuaEventManager.triggerEvent("OnPostUIDraw")
+            Patch.insertHookForEventTrigger(method, "OnPostUIDraw", PostRenderHook, false);
+        });
+    }
+
+    /**
+     * Проверяет, содержит ли хотя бы один из заданных файлов аннотацию @Injected.
+     * @return true, если аннотация @Injected найдена хотя бы в одном файле. false в противном случае.
+     */
+    public boolean checkInjectedAnnotations() {
+        return Arrays.stream(PATCH_FILES)
+                .anyMatch(filePath -> Patch.isInjectedAnnotationPresent(filePath, GAME_CLASS_FOLDER));
+    }
+
+    /**
+     * Проверяет наличие игровой папки и определенных файлов внутри.
+     * @return true, если игровая папка и все требуемые файлы присутствуют. false в противном случае.
+     */
+    public boolean isGameFolder() {
+        Path gameFolderPath = Paths.get(GAME_CLASS_FOLDER);
+
+        // Проверяем, существует ли папка игры
+        if (Files.exists(gameFolderPath) && Files.isDirectory(gameFolderPath)) {
+            // Если папка существует, проверяем наличие всех необходимых файлов
+            return Arrays.stream(PATCH_FILES)
+                    .allMatch(fileName -> Files.exists(gameFolderPath.resolve(fileName)));
+        }
+
+        return false;
     }
 
     /**
      * Патчинг игровых bytecode файлов игры
      * для реализации собственного фунционала
      */
-    public void PatchGame() throws UnsupportedEncodingException {
-        Console.Print("Preparing to install the EtherHack...");
+    public void patchGame() {
+        Logger.print("Preparing to install the EtherHack...");
 
-        BackupFiles();
+        if (!isGameFolder()){
+            Logger.print("No game files were found in this directory. Place the cheat in the root folder of the game");
+            return;
+        };
 
-        Console.Print("Preparation for implementation in game files...");
+        Logger.print("Checking for injections in game files");
 
-        PatchGameWindow();
+        if (checkInjectedAnnotations()) {
+            Logger.print("Signs of interference were found in the game files. If you have installed this cheat before, run it with the '--uninstall' flag. Otherwise, check the integrity of the game files via Steam");
+            return;
+        }
+        Logger.print("No signs of injections were found. Preparing for backup...");
 
-        PatchGameCore();
+        backupGameFiles();
 
-        PatchGameNetwork();
+        Logger.print("Preparation for injection into game file...");
 
-        ExtractEtherFiles();
+        patchGameWindow();
 
-        Console.Print("The cheat installation is complete, you can enter the game!");
+        patchUIManager();
+
+        Patch.saveModifiedClasses();
+
+        Logger.print("Extracting EtherHack files to the current directory");
+
+        extractEtherHack();
+
+        Logger.print("The cheat installation is complete, you can enter the game!");
     }
 
     /**
      * Восстановление оригинальных файлов игры
      */
-    public void RestoreFiles() {
-        Console.Print("Restoring files...");
+    public void restoreFiles() {
+        Logger.print("Restoring files...");
 
-        try {
-            for (int i = 0; i < backupFilesList.size(); i++) {
-                String fileName = backupFilesList.get(i);
-                String iteration = "[" + (i + 1) + "/" + backupFilesList.size() + "]";
+        Path currentPath = Paths.get("").toAbsolutePath();
 
-                Path currentPath = Paths.get("").toAbsolutePath();
-                Path originalPath = Paths.get(currentPath.toString(), "zombie", fileName);
-                Path backupPath = Paths.get(originalPath.toString() + ".bkup");
+        for (int i = 0; i < PATCH_FILES.length; i++) {
+            String fileName = PATCH_FILES[i];
+            String iteration = "[" + (i + 1) + "/" + PATCH_FILES.length + "]";
+            Logger.print("Restoring the file '" + fileName + "' " + iteration);
 
-                if (Files.exists(backupPath)) {
-                    Console.Print("Restoring the file '" + fileName + "' " + iteration);
+            Path originalFilePath = Paths.get(currentPath.toString(), GAME_CLASS_FOLDER, PATCH_FILES[i]);
+            Path backupFilePath = Paths.get(originalFilePath.toString() + ".bkup");
 
-                    if (Files.exists(originalPath)) {
-                        Files.delete(originalPath);
+            if (Files.exists(backupFilePath)) {
+                try {
+                    if (Files.exists(originalFilePath)) {
+                        Files.delete(originalFilePath);
                     }
 
-                    Files.move(backupPath, originalPath);
-
-                } else {
-                    Console.Print("Backup file '" + fileName + ".bkup' not found. Skipping restore.");
+                    Files.move(backupFilePath, originalFilePath);
+                } catch (IOException e) {
+                    Logger.print("Error when restoring the game file '" + fileName +"': " + e.getMessage());
                 }
+            } else {
+                Logger.print("Backup file '" + fileName + ".bkup' not found. Skipping restore");
             }
-
-            deleteExistingDirectories();
-
-            Console.Print("Files restoration completed.");
-
-        } catch (Exception e) {
-            Console.Print("Error while restoring files: " + e.getMessage());
         }
+
+        uninstallEtherHackFiles();
+
+        Logger.print("Files restoration completed!");
     }
+
 }

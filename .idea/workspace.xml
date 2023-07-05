@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="bbb67db7-7490-4f53-9e2c-44df0def9d24" name="Changes" comment="Bugfix: Decoding URL-encoded paths to JAR file">
+      <change afterPath="$PROJECT_DIR$/demo/1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/demo/2.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/demo/3.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/demo/4.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/demo/5.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/demo/6.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/demo/7.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gradlew" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gradlew.bat" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/EtherHack/Ether/EtherAPI.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/EtherHack/hooks/OnUIElementPostRenderHook.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/EtherHack/hooks/interfaces/IOnUIElementPostRenderListener.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/EtherHack/hooks/interfaces/IOnUIElementPreRenderListener.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/EtherHack/utils/Logger.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/EtherHack/utils/Patch.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/EtherHack/lua/EtherHackMenu.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/project.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/EtherHack/GamePatcher.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/EtherHack/GamePatcher.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/EtherHack/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/EtherHack/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/EtherHack/cheat/EtherGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/EtherHack/Ether/EtherGUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/EtherHack/cheat/EtherHackCredits.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/EtherHack/Ether/EtherHackCredits.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/EtherHack/cheat/EtherMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/EtherHack/Ether/EtherMain.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/EtherHack/cheat/ui/Button.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/EtherHack/cheat/ui/Window.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/EtherHack/handlers/AbstractEventHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/EtherHack/hooks/GameCoreHook.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/EtherHack/hooks/OnUIElementPreRenderHook.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/EtherHack/hooks/IGameCoreListener.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/EtherHack/utils/Console.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/EtherHack/utils/Info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/EtherHack/utils/Info.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/EtherHack/utils/Rendering.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/EtherHack/utils/Rendering.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="EtherHack" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="EtherHack" type="f1a62948:ProjectNode" />
+                <item name="Run Configurations" type="7b0102dc:RunConfigurationsNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="NewLua" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2RTRDmOPQ2yH8KggKwq4oOA4RoL" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Quzile/IdeaProjects/Project-Zomboid-EtherHack&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="EtherHack.Ether" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Quzile\IdeaProjects\Project-Zomboid-EtherHack\src\main\resources" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="EtherHack.hooks.interfaces" />
+      <recent name="EtherHack.hooks" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="Project-Zomboid-EtherHack [jar]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="jar" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <ForceTestExec>false</ForceTestExec>
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Gradle.Project-Zomboid-EtherHack [jar]" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="bbb67db7-7490-4f53-9e2c-44df0def9d24" name="Changes" comment="" />
+      <created>1687271967951</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1687271967951</updated>
+      <workItem from="1687271968995" duration="884000" />
+      <workItem from="1687428706198" duration="966000" />
+      <workItem from="1687436611114" duration="256000" />
+      <workItem from="1687436906671" duration="1069000" />
+      <workItem from="1687437985990" duration="20754000" />
+      <workItem from="1688027354891" duration="312000" />
+      <workItem from="1688113637556" duration="25770000" />
+      <workItem from="1688403110609" duration="645000" />
+      <workItem from="1688403776854" duration="39000" />
+      <workItem from="1688403818278" duration="14154000" />
+      <workItem from="1688445316961" duration="30752000" />
+      <workItem from="1688562599873" duration="5748000" />
+      <workItem from="1688572687070" duration="2882000" />
+    </task>
+    <task id="LOCAL-00001" summary="Comment and credits position bug fix">
+      <created>1687272766642</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1687272766642</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Bugfix: Decoding URL-encoded paths to JAR file">
+      <created>1687429409605</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1687429409605</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="Comment and credits position bug fix" />
+    <MESSAGE value="Bugfix: Decoding URL-encoded paths to JAR file" />
+    <option name="LAST_COMMIT_MESSAGE" value="Bugfix: Decoding URL-encoded paths to JAR file" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

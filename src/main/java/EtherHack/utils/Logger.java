@@ -4,7 +4,7 @@ import lombok.experimental.UtilityClass;
 import zombie.debug.DebugLog;
 
 @UtilityClass
-public class Console {
+public class Logger {
     /**
      * Вывод текста в консоль
      * @param text Текст для вывода

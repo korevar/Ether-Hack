@@ -1,4 +1,4 @@
-## [Ether Hack v1.1](https://github.com/Quzile/Project-Zomboid-EtherHack/releases/tag/EtherHack-1.1) - 2023-07-06
+## [Ether Hack v1.1](https://github.com/Quzile/Project-Zomboid-EtherHack/releases/tag/v1.1) - 2023-07-06
 
 - Fixed API and GUI initialization
 - Fixed feature `Set Max Default Skills`, now all available skills are set to the maximum level

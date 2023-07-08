@@ -20,10 +20,10 @@ public class Info {
     static {
         Properties properties = new Properties();
         try {
-            properties.load(Info.class.getClassLoader().getResourceAsStream("project.properties"));
+            properties.load(Info.class.getClassLoader().getResourceAsStream("EtherHack/EtherHack.properties"));
             CHEAT_VERSION = properties.getProperty("version").replace("'", "");
         } catch (IOException e) {
-            throw new ExceptionInInitializerError("Unable to load version from project.properties");
+            throw new ExceptionInInitializerError("Unable to load version from EtherHack.properties");
         }
         CHEAT_GUI_TITLE = CHEAT_NAME + " (" + CHEAT_VERSION + ")";
         CHEAT_CREDITS_TITLE = "Patched by " + CHEAT_NAME + " (" + CHEAT_VERSION + ")";

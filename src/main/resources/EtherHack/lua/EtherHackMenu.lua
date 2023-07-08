@@ -1,126 +1,35 @@
 require "ISUI/ISCollapsableWindow"
+EtherRequire "EtherHack/lua/EtherHackAPI.lua"
+EtherRequire "EtherHack/lua/ItemCreator/EtherItemCreator.lua"
+EtherRequire "EtherHack/lua/PlayerEditor/EtherPlayerEditor.lua"
+EtherRequire "EtherHack/lua/AdminPanel/EtherAdminPanel.lua"
 
-EHMenu = ISCollapsableWindow:derive("EHMenu");
+EtherMain = ISCollapsableWindow:derive("EtherMain");
 
 --*********************************************************
 --* Экземпляр окна UI
 --*********************************************************
-EHMenu.instance = nil;
+EtherMain.instance = nil;
 
 --*********************************************************
 --* Клавиша открытия главного меню - Insert (210)
 --*********************************************************
-EHMenu.menuKeyID = 210;
-
---*********************************************************
---* API EtherHack
---*********************************************************
-EHMenu.API = {
-    -- Находится ли игрок в игровой сессии
-    isEtherInGame = function()
-        return isEtherInGame();
-    end,
-
-    -- Получить заголовок для окна
-    getEtherUITitle = function()
-        return getEtherUITitle();
-    end,
-
-    -- Добавить очки навыков при создании персонажа
-    addProfessionPoint = function(point)
-        local UIElementsList = UIManager.getUI()
-		for i=1, UIElementsList:size() do
-			local UIElementInstance = UIElementsList:get(i-1);
-            if UIElementInstance:getTable() and UIElementInstance:getTable():getChildren() ~= nil then
-                for _, child in pairs(UIElementInstance:getTable():getChildren()) do
-                    if child.Type == "CharacterCreationProfession" then
-                        child.pointToSpend = child.pointToSpend + point;
-                        break;
-                    end
-                end
-            end
-		end
-    end,
-    -- Включение режима разработки
-    setDebugBypass = function(changeOptionTarget, joypadIndex, isSelected)
-        setEtherBypassDebugMode(isSelected);
-    end,
-
-    -- Получение прав администратора
-    setAdminAccess = function()
-        setEtherAdminAccess();
-    end,
-
-    -- Выдача предметов
-    addItem = function(id, amount)
-        getPlayer():getInventory():AddItems(id, amount);
-    end,
-
-    -- Метод для переключения состояния "Invisible"
-    toggleInvisible = function(changeOptionTarget, joypadIndex, isSelected)
-        if not isEtherInGame() or getPlayer() == nil then return end
-        getPlayer():setInvisible(isSelected);
-    end,
-
-    -- Метод для переключения состояния "GodMode"
-    toggleGodMode = function(changeOptionTarget, joypadIndex, isSelected)
-        if not isEtherInGame() or getPlayer() == nil then return end
-        getPlayer():setGodMod(isSelected);
-    end,
-
-    -- Метод для переключения состояния "GhostMode"
-    toggleGhostMode = function(changeOptionTarget, joypadIndex, isSelected)
-        if not isEtherInGame() or getPlayer() == nil then return end
-        getPlayer():setGhostMode(isSelected);
-    end,
-
-    -- Метод для переключения состояния "NoClip"
-    toggleNoClip = function(changeOptionTarget, joypadIndex, isSelected)
-        if not isEtherInGame() or getPlayer() == nil then return end
-        getPlayer():setNoClip(isSelected);
-    end,
-
-    -- Установка всех навыков на максимальный уровень
-    setMaxDefaultSkill = function()
-        setEtherMaxDefaultSkill();
-    end,
-};
+EtherMain.menuKeyID = 210;
 
 --*********************************************************
 --* Закрытие окна по нажатию кнопки UI
 --*********************************************************
-function EHMenu:close()
-	EHMenu.instance:setVisible(false);
-    EHMenu.instance:removeFromUIManager();
-    EHMenu.instance = nil;
-end
-
---*********************************************************
---* Создание нового экземпляра меню
---*********************************************************
-function EHMenu:new()
-    local menuTableData = {};
-
-    local width = 200;
-    local height = 345;
-
-    local positionX = getCore():getScreenWidth() / 2 - width /2;
-    local positionY = getCore():getScreenHeight() / 2 - height /2;
-
-    menuTableData = ISCollapsableWindow:new(positionX, positionY, width, height);
-    setmetatable(menuTableData, self);
-    self.__index = self;
-    self.checkboxes = {};
-    self.buttons = {};
-
-    return menuTableData;
+function EtherMain:close()
+	EtherMain.instance:setVisible(false);
+    EtherMain.instance:removeFromUIManager();
+    EtherMain.instance = nil;
 end
 
 --*********************************************************
 --* Обновление UI каждый кадр
 --*********************************************************
-function EHMenu:update()
-    if not EHMenu.API.isEtherInGame() or getPlayer() == nil then
+function EtherMain:update()
+    if not EtherHack.API.isEtherInGame() or getPlayer() == nil then
         for id, item in pairs(self.checkboxes) do
             if item.isOnlyInGame then
                 item.enable = false;
@@ -130,16 +39,9 @@ function EHMenu:update()
 end
 
 --*********************************************************
---* Хук рендера
---*********************************************************
-function EHMenu:render()
-    ISCollapsableWindow.render(self);
-end
-
---*********************************************************
 --* Добавление чекбоксов по вертикали
 --*********************************************************
-function EHMenu:addVerticalCheckBox(option, id, method, isSelected, isOnlyInGame)
+function EtherMain:addVerticalCheckBox(option, id, method, isSelected, isOnlyInGame)
     local checkboxY = 20 + (#self.checkboxes * 20);
 
     local tick = ISTickBox:new(10, checkboxY, 100, 50, id, self, method);
@@ -160,7 +62,7 @@ end
 --*********************************************************
 --* Хук нажатия на кнопку
 --*********************************************************
-function EHMenu:onOptionMouseDown(button, x, y)
+function EtherMain:onOptionMouseDown(button, x, y)
     -- Проверка наличия кнопки в таблице self.buttons
     local isButton = false
     for _, btn in ipairs(self.buttons) do
@@ -172,16 +74,16 @@ function EHMenu:onOptionMouseDown(button, x, y)
 
     if not isButton then return false end
 
-    if button.isOnlyInGame and (not EHMenu.API.isEtherInGame() or getPlayer() == nil) then return end
+    if button.isOnlyInGame and (not EtherHack.API.isEtherInGame() or getPlayer() == nil) then return end
     button.method();
 end
 
 --*********************************************************
 --* Добавление кнопок
 --*********************************************************
-function EHMenu:addVerticalButton(title, id, width, height, method, isOnlyInGame)
+function EtherMain:addVerticalButton(title, id, width, height, method, isOnlyInGame)
     local buttonY = #self.checkboxes * 20 + 30 + (#self.buttons * 35);
-    local button = ISButton:new(10, buttonY, width, height, title, self, EHMenu.onOptionMouseDown);
+    local button = ISButton:new(10, buttonY, width, height, title, self, EtherMain.onOptionMouseDown);
     button.internal = id;
     button.method = method;
     button.isOnlyInGame = isOnlyInGame;
@@ -196,85 +98,74 @@ end
 --*********************************************************
 --* Создание дочерних элементов
 --*********************************************************
-function EHMenu:createChildren()
+function EtherMain:createChildren()
     ISCollapsableWindow.createChildren(self);
 
-    self:addVerticalCheckBox("Debug Mode Bypass","DebugModeBypass", EHMenu.API.setDebugBypass, isEtherBypassDebugMode() or false, false);
-    self:addVerticalCheckBox("Invisible","Invisible", EHMenu.API.toggleInvisible, getPlayer() and getPlayer():isInvisible() or false, true);
-    self:addVerticalCheckBox("God Mode", "GodMode", EHMenu.API.toggleGodMode, getPlayer() and getPlayer():isGodMod() or false, true);
-    self:addVerticalCheckBox("Ghost Mode", "GhostMode", EHMenu.API.toggleGhostMode, getPlayer() and getPlayer():isGhostMode() or false, true);
-    self:addVerticalCheckBox("No Clip", "NoClip", EHMenu.API.toggleNoClip, getPlayer() and getPlayer():isNoClip() or false, true);
+    self:addVerticalCheckBox("Debug Mode Bypass","DebugModeBypass", EtherHack.API.setDebugBypass, EtherHack.API.isEtherBypassDebugMode() or false, false);
+    self:addVerticalCheckBox("MultiHit Zombies","MultiHitZombies", EtherHack.API.toggleMultiHitZombies, getPlayer() and EtherHack.API.isMultiHitZombies() or false, true);
+    self:addVerticalCheckBox("Invisible","Invisible", EtherHack.API.toggleInvisible, getPlayer() and getPlayer():isInvisible() or false, true);
+    self:addVerticalCheckBox("God Mode", "GodMode", EtherHack.API.toggleGodMode, getPlayer() and getPlayer():isGodMod() or false, true);
+    self:addVerticalCheckBox("No Clip", "NoClip", EtherHack.API.toggleNoClip, getPlayer() and getPlayer():isNoClip() or false, true);
+    self:addVerticalCheckBox("Unlimited Carry", "UnlimitedCarry", EtherHack.API.toggleUnlimitedCarry, getPlayer() and EtherHack.API.isEtherUnlimitedCarry() or false, true);
+    self:addVerticalCheckBox("Unlimited Endurance", "UnlimitedEndurance", EtherHack.API.toggleUnlimitedEndurance, getPlayer() and EtherHack.API.isUnlimitedEndurance() or false, true);
+    self:addVerticalCheckBox("Disable Fatigue", "DisableFatigue", EtherHack.API.toggleDisableFatigue, getPlayer() and EtherHack.API.isDisableFatigue() or false, true);
+    self:addVerticalCheckBox("Disable Hunger", "DisableHunger", EtherHack.API.toggleDisableHunger, getPlayer() and EtherHack.API.isDisableHunger() or false, true);
+    self:addVerticalCheckBox("Disable Thirst", "DisableThirst", EtherHack.API.toggleDisableThirst, getPlayer() and EtherHack.API.isDisableThirst() or false, true);
+    self:addVerticalCheckBox("Disable Character Needs", "CharacterNeeds", EtherHack.API.toggleCharacterNeeds, getPlayer() and EtherHack.API.isCharacterNeeds() or false, true);
 
-    self:addVerticalButton("Give Profession Points (beta)", "GiveProfessionPoints", self.width - 20, 30, function() EHMenu.API.addProfessionPoint(100) end, false)
-    self:addVerticalButton("Set Max Default Skill", "SetMaxDefaultSkill", self.width - 20, 30, function() EHMenu.API.setMaxDefaultSkill() end, true)
-    self:addVerticalButton("Get Admin Access", "SetAdminAccess", self.width - 20, 30, function() EHMenu.API.setAdminAccess() end, true)
-    self:addVerticalButton("Items Creator", "ItemCreator", self.width - 20, 30, function() ISItemsListViewer.OnOpenPanel() end, true)
-    self:addVerticalButton("Player Editor", "PlayerEditor", self.width - 20, 30, function() EHPlayerStatMenu.OnOpenPanel() end, true)
-    self:addVerticalButton("Game Debug Menu", "GameDebugMenu", self.width - 20, 30, function() ISGeneralDebug.OnOpenPanel() end, true)
+    self:addVerticalButton("Add x100 Trait Points (beta)", "GiveProfessionPoints", self.width - 20, 30, function() EtherHack.API.addProfessionPoint(100) end, false)
+    self:addVerticalButton("Game Debugger", "GameDebugMenu", self.width - 20, 30, function() ISGeneralDebug.OnOpenPanel() end, true)
+    self:addVerticalButton("Items Creator", "ItemCreator", self.width - 20, 30, function() EtherItemCreator.OnOpenPanel() end, true)
+    self:addVerticalButton("Player Editor", "PlayerEditor", self.width - 20, 30, function() EtherPlayerEditor.OnOpenPanel() end, true)
+    self:addVerticalButton("Get Admin Access", "SetAdminAccess", self.width - 20, 30, function() EtherHack.API.setAdminAccess() end, true)
+    self:addVerticalButton("Open Admin Menu", "AdminMenu", self.width - 20, 30, function() EtherHack.API.openAdminMenu() end, true)
 end
 
 --*********************************************************
 --* Логика открытия и закрытия меню по нажатию клавиши
 --*********************************************************
-function EHMenu.onOpenAndCloseMenu(key)
-    if key == EHMenu.menuKeyID then
+function EtherMain.OnOpenPanel(key)
+    if key == EtherMain.menuKeyID then
         -- Если панель уже существует, закрываем окно
-        if EHMenu.instance ~= nil then
-            EHMenu.instance:setVisible(false);
-            EHMenu.instance:removeFromUIManager();
-            EHMenu.instance = nil;
+        if EtherMain.instance ~= nil then
+            EtherMain.instance:setVisible(false);
+            EtherMain.instance:removeFromUIManager();
+            EtherMain.instance = nil;
             return
         end
 
         -- Создаем новую панель
-        EHMenu.instance  = EHMenu:new()
-        EHMenu.instance:initialise();
-        EHMenu.instance:instantiate();
-        EHMenu.instance:addToUIManager();
-        EHMenu.instance:setVisible(true);
-        EHMenu.instance:setResizable(false);
-        EHMenu.instance:setTitle(EHMenu.API.getEtherUITitle());
-        EHMenu.instance:setAlwaysOnTop(true);
+        EtherMain.instance  = EtherMain:new()
+        EtherMain.instance:initialise();
+        EtherMain.instance:instantiate();
+        EtherMain.instance:addToUIManager();
+        EtherMain.instance:setVisible(true);
+        EtherMain.instance:setResizable(false);
+        EtherMain.instance:setTitle(EtherHack.API.getEtherUITitle());
+        EtherMain.instance:setAlwaysOnTop(true);
 
     end
 end
-
-Events.OnKeyPressed.Add(EHMenu.onOpenAndCloseMenu)
 
 --*********************************************************
---* Override
+--* Создание нового экземпляра меню
 --*********************************************************
-EHPlayerStatMenu = ISPlayerStatsUI:derive("EHPlayerStatMenu");
+function EtherMain:new()
+    local menuTableData = {};
 
-function EHPlayerStatMenu:updateButtons()
-    local buttonEnable = true;
-    self.addTraitBtn.enable = buttonEnable;
-    self.changeProfession.enable = buttonEnable;
-    self.changeForename.enable = buttonEnable;
-    self.changeSurname.enable = buttonEnable;
-    --    self.addGlobalXP.enable = buttonEnable;
-    self.muteAllBtn.enable = buttonEnable;
-    self.addXpBtn.enable = buttonEnable;
-    self.addLvlBtn.enable = buttonEnable and (self.selectedPerk ~= nil)
-    self.loseLvlBtn.enable = buttonEnable and (self.selectedPerk ~= nil)
-    self.userlogBtn.enable = buttonEnable;
-    self.manageInvBtn.enable = buttonEnable;
-    self.warningPointsBtn.enable = buttonEnable;
-    self.changeAccessLvlBtn.enable = (self.admin:getAccessLevel() == "Admin" or self.admin:getAccessLevel() == "Moderator") and self:canModifyThis();
-    self.changeUsernameBtn.enable = buttonEnable;
-    for _,image in ipairs(self.traits) do
-        self.traitsRemoveButtons[image.label].enable = buttonEnable;
-    end
+    local width = 200;
+    local height = 465;
+
+    local positionX = getCore():getScreenWidth() / 2 - width /2;
+    local positionY = getCore():getScreenHeight() / 2 - height /2;
+
+    menuTableData = ISCollapsableWindow:new(positionX, positionY, width, height);
+    setmetatable(menuTableData, self);
+    self.__index = self;
+    self.checkboxes = {};
+    self.buttons = {};
+
+    return menuTableData;
 end
 
-function EHPlayerStatMenu.OnOpenPanel()
-    if EHPlayerStatMenu.instance then
-        EHPlayerStatMenu.instance:close()
-    end
-    local x = getCore():getScreenWidth() / 2 - (800 / 2);
-    local y = getCore():getScreenHeight() / 2 - (800 / 2);
-    local ui = EHPlayerStatMenu:new(x,y - 100,800,800, getPlayer(), getPlayer())
-    ui:initialise();
-    ui:addToUIManager();
-    ui:setVisible(true);
-end
+Events.OnKeyPressed.Add(EtherMain.OnOpenPanel)

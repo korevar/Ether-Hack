@@ -5,61 +5,77 @@ import EtherHack.hooks.interfaces.IOnUIElementPostRenderListener;
 import EtherHack.utils.Logger;
 import org.lwjglx.input.Keyboard;
 import zombie.Lua.LuaManager;
-import zombie.core.Core;
-import zombie.input.GameKeyboard;
-import zombie.network.GameClient;
 
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class EtherGUI implements IOnUIElementPostRenderListener {
-    public EtherAPI etherAPI;
+    /**
+     * Кнопка для перезагрузки UI
+     */
+    private final int keyReload = Keyboard.KEY_HOME;
+
+    /**
+     * Была ли нажата кнопка перезагрузки UI
+     */
+    private AtomicBoolean wasKeyReloadPressed = new AtomicBoolean(false);
+
+    /**
+     * Список зависимостей Lua UI
+     */
+    public ArrayList<String> luaDependenciesList;
 
     /**
      * Путь до главного файла UI
      */
-    private final String PATH_LUA_UI_MAIN = "EtherHack/lua/EtherHackMenu.lua";
+    public final String pathToLuaMainFile = "EtherHack/lua/EtherHackMenu.lua";
 
     /**
-     * Флаг, был ли загружен API EtherHack
-     */
-    private AtomicBoolean isAPIInitialized = new AtomicBoolean(false);
-
-
-    /**
-     * Конструктор, реализующий подписку на события OnUIElementPostRender
+     * Конструктор EtherGUI
      */
     public EtherGUI() {
+        luaDependenciesList = new ArrayList<>();
         OnUIElementPostRenderHook.addListener(this);
-        etherAPI = new EtherAPI();
     }
 
     /**
      * Компиляция UI Lua
      */
     public void loadLuaUI(){
-        if(!LuaManager.loaded.contains(PATH_LUA_UI_MAIN)){
+        if(!LuaManager.loaded.contains(pathToLuaMainFile)){
             Logger.printLog("Loading EtherHackUI...");
-            LuaManager.RunLua(PATH_LUA_UI_MAIN, false);
+            LuaManager.RunLua(pathToLuaMainFile, false);
         }
     }
+
+    /**
+     * Перезагрузка UI
+     */
+    public void reloadUI() {
+        Logger.printLog("Reloading EtherHackUI...");
+
+        Logger.printLog("Removing from LuaManager: " + pathToLuaMainFile);
+        LuaManager.loaded.remove(pathToLuaMainFile);
+        for (String path: luaDependenciesList ) {
+            Logger.printLog("Removing from LuaManager: " + path);
+            LuaManager.loaded.remove(path);
+        }
+
+        LuaManager.RunLua(pathToLuaMainFile, true);
+
+        Logger.printLog("Reloading EtherHackUI has been completed!");
+    }
+
+
     /**
      * Реализация функционала при вызове хука OnUIElementPostRender
      */
     @Override
     public void onCall() {
-        if (isAPIInitialized.compareAndSet(false, true) || (isAPIInitialized.get() && !LuaManager.loaded.contains(PATH_LUA_UI_MAIN))){
-            Logger.printLog("Initializing EtherAPI...");
-            etherAPI.init();
+        boolean keyCurrentlyDown = Keyboard.isKeyDown(keyReload);
+        if (keyCurrentlyDown && !wasKeyReloadPressed.get()) {
+            reloadUI();
         }
-
-        /**
-         * Дебаг режима в мультиплеере
-         */
-        Core.bDebug = GameClient.bIngame && etherAPI.isBypassDebugMode;
-
-        loadLuaUI();
-
+        wasKeyReloadPressed.set(keyCurrentlyDown);
     }
-
-
 }

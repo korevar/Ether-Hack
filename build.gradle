@@ -5,7 +5,7 @@ plugins {
 compileJava.options.encoding = 'UTF-8'
 
 def properties = new Properties()
-file("src/main/resources/project.properties").withInputStream { properties.load(it) }
+file("src/main/resources/EtherHack/EtherHack.properties").withInputStream { properties.load(it) }
 
 group = 'EtherHack'
 version = properties.getProperty('version').replaceAll("'", "")
@@ -34,7 +34,7 @@ dependencies {
 
 jar {
     destinationDirectory = file('build')
-    archiveFileName = 'EtherHack-'+ version +'.jar'
+    archiveFileName = 'EtherHack-' + version + '.jar'
 
     manifest {
         attributes 'Main-Class': 'EtherHack.Main'

@@ -1,5 +1,7 @@
 package EtherHack.Ether;
 
+import EtherHack.hooks.OnUIElementPostRenderHook;
+import EtherHack.hooks.interfaces.IOnUIElementPostRenderListener;
 import EtherHack.utils.Info;
 import se.krka.kahlua.converter.KahluaConverterManager;
 import se.krka.kahlua.integration.annotations.LuaMethod;
@@ -7,14 +9,15 @@ import se.krka.kahlua.integration.expose.LuaJavaClassExposer;
 import se.krka.kahlua.vm.KahluaTable;
 import se.krka.kahlua.vm.Platform;
 import zombie.Lua.LuaManager;
+import zombie.ZomboidFileSystem;
 import zombie.characters.IsoPlayer;
-import zombie.characters.skills.PerkFactory;
+import zombie.core.Core;
 import zombie.network.GameClient;
 
 /**
  * Этот класс предоставляет API Ether для приложения.
  */
-public class EtherAPI  {
+public class EtherAPI implements IOnUIElementPostRenderListener {
     public static EtherExposer exposer;
 
     /**
@@ -23,9 +26,15 @@ public class EtherAPI  {
     public boolean isBypassDebugMode = false;
 
     /**
+     * Включен ли режим бесконечной грузоподъемности
+     */
+    public boolean isUnlimitedCarry = false;
+
+    /**
      * Конструктор класса EtherAPI.
      */
     public EtherAPI(){
+        OnUIElementPostRenderHook.addListener(this);
     }
 
     /**
@@ -37,6 +46,17 @@ public class EtherAPI  {
         }
         exposer = new EtherExposer(LuaManager.converterManager, LuaManager.platform, LuaManager.env);
         exposer.exposeAPI();
+    }
+
+    /**
+     * Реализация функционала при вызове хука OnUIElementPostRender
+     */
+    @Override
+    public void onCall() {
+        /**
+         * Дебаг режим в мультиплеере
+         */
+        Core.bDebug = GameClient.bIngame && isBypassDebugMode;
     }
 
     /**
@@ -68,6 +88,41 @@ public class EtherAPI  {
         public GlobalEtherAPI() {
         }
 
+        @LuaMethod(
+                name = "EtherRequire",
+                global = true
+        )
+        public static Object EtherRequire(String path) {
+            String fixedPath = path.endsWith(".lua") ? path : path + ".lua";
+
+            if (!EtherMain.getInstance().etherGUI.luaDependenciesList.contains(fixedPath)) {
+                EtherMain.getInstance().etherGUI.luaDependenciesList.add(fixedPath);
+            }
+            return LuaManager.RunLua(ZomboidFileSystem.instance.getString(fixedPath));
+        }
+
+        /**
+         * Изменение режима бесконечного объема инвентаря
+         */
+        @LuaMethod(
+                name = "setEtherUnlimitedCarry",
+                global = true
+        )
+        public static void setEtherUnlimitedCarry(boolean isEnable) {
+            EtherMain.getInstance().etherAPI.isUnlimitedCarry = isEnable;
+        }
+
+        /**
+         * Получение состояния режима бесконечного объема инвентаря
+         */
+        @LuaMethod(
+                name = "isEtherUnlimitedCarry",
+                global = true
+        )
+        public static boolean isEtherUnlimitedCarry() {
+            return EtherMain.getInstance().etherAPI.isUnlimitedCarry;
+        }
+
         /**
          * Изменение режима разработки
          */
@@ -78,8 +133,9 @@ public class EtherAPI  {
         public static void setEtherBypassDebugMode(boolean isEnable) {
             EtherMain.getInstance().etherAPI.isBypassDebugMode = isEnable;
         }
+
         /**
-         * Получение данных о работе режима разработки
+         * Получение состояния режима разработки
          */
         @LuaMethod(
                 name = "isEtherBypassDebugMode",
@@ -123,65 +179,6 @@ public class EtherAPI  {
                 if (p.isLocalPlayer()) {
                     p.accessLevel = "admin";
                     p.accessLevel.equals("admin");
-                }
-            }
-        }
-
-        /**
-         * Выдача предметов
-         */
-        @LuaMethod(
-                name = "addEtherItem",
-                global = true
-        )
-        public static void addEtherItem(String id, int amount) {
-            for (IsoPlayer p : GameClient.instance.getPlayers()) {
-                if (p.isLocalPlayer()) {
-                    p.getInventory().AddItems(id, amount);
-                }
-            }
-        }
-
-        /**
-         * Установка стандартных навыков на максимальный уровень
-         */
-        @LuaMethod(
-                name = "setEtherMaxDefaultSkill",
-                global = true
-        )
-        public static void setEtherMaxDefaultSkill() {
-            for (IsoPlayer p : GameClient.instance.getPlayers()) {
-                if (p.isLocalPlayer()) {
-                    for (int i = 0; i < 400; i++) {
-                        p.getXp().AddXP(PerkFactory.Perks.Fitness, 1000);
-                        p.getXp().AddXP(PerkFactory.Perks.Strength, 1000);
-                    }
-                    for (int i = 0; i < 200; i++) {
-                        p.getXp().AddXP(PerkFactory.Perks.Axe, 1000);
-                        p.getXp().AddXP(PerkFactory.Perks.Blunt, 1000);
-                        p.getXp().AddXP(PerkFactory.Perks.SmallBlunt, 1000);
-                        p.getXp().AddXP(PerkFactory.Perks.LongBlade, 1000);
-                        p.getXp().AddXP(PerkFactory.Perks.SmallBlade, 1000);
-                        p.getXp().AddXP(PerkFactory.Perks.Spear, 1000);
-                        p.getXp().AddXP(PerkFactory.Perks.Maintenance, 1000);
-                        p.getXp().AddXP(PerkFactory.Perks.Aiming, 1000);
-                        p.getXp().AddXP(PerkFactory.Perks.Reloading, 1000);
-                        p.getXp().AddXP(PerkFactory.Perks.Cooking, 1000);
-                        p.getXp().AddXP(PerkFactory.Perks.Farming, 1000);
-                        p.getXp().AddXP(PerkFactory.Perks.Doctor, 1000);
-                        p.getXp().AddXP(PerkFactory.Perks.Electricity, 1000);
-                        p.getXp().AddXP(PerkFactory.Perks.MetalWelding, 1000);
-                        p.getXp().AddXP(PerkFactory.Perks.Mechanics, 1000);
-                        p.getXp().AddXP(PerkFactory.Perks.Tailoring, 1000);
-                        p.getXp().AddXP(PerkFactory.Perks.Fishing, 1000);
-                        p.getXp().AddXP(PerkFactory.Perks.Trapping, 1000);
-                        p.getXp().AddXP(PerkFactory.Perks.Sprinting, 1000);
-                        p.getXp().AddXP(PerkFactory.Perks.Nimble, 1000);
-                        p.getXp().AddXP(PerkFactory.Perks.Sneak, 1000);
-                        p.getXp().AddXP(PerkFactory.Perks.Lightfoot, 1000);
-                        p.getXp().AddXP(PerkFactory.Perks.PlantScavenging, 1000);
-                        p.getXp().AddXP(PerkFactory.Perks.Woodwork, 1000);
-                    }
                 }
             }
         }

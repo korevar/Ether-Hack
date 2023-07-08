@@ -8,7 +8,11 @@
 </p>
 
 This is a cheat written in Java(API) and LUA(GUI) for Project Zomboid. It is aimed at providing the game with additional functionality that allows users to get some benefits. Please use responsibly and understand the consequences that may arise as a result of improper use.
-The performance of the cheat was tested on the latest version of the game `41.78.16 (Steam)` (July 05, 2023).
+The performance of the cheat was tested on the latest version of the game `41.78.16 (Steam)` (July 09, 2023).
+
+You can watch the cheat [installation video](https://www.youtube.com/watch?v=Olx7O3HyeZc) and see its main functions in action.
+
+Also, if desired, you can provide [support <3](https://www.donationalerts.com/r/quzile)
 
 ## Table of Contents
 - [Cheat functionality](#cheat-functionality)
@@ -26,32 +30,41 @@ The performance of the cheat was tested on the latest version of the game `41.78
 
 ## Cheat functionality
 
-| Function                    |        Working in multiplayer        | Working in a co-op  | Description                                                                                                                                                                                                                                                    |
-|-----------------------------|:------------------------------------:|:-------------------:|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Debug Mode Bypass           |                  +                   |          +          | Allows you to use the developer mode in multiplayer (when starting the game with -debug connection is not possible). When you click the right mouse button, additional menus appear, including changing clothes, repairing cars, teleporting on the map, etc.  |
-| Invisible                   |                  +                   |          +          | Allows you to become invisible to everyone                                                                                                                                                                                                                     |
-| God Mode                    |                  +                   |          +          | Gives immortality to the character                                                                                                                                                                                                                             |
-| Ghost Mode                  |                  +                   |          +          | Invisibility for zombies                                                                                                                                                                                                                                       |
-| No Clip                     |                  +                   |          +          | Ability to pass through walls and objects                                                                                                                                                                                                                      |
-| Give Profession Point(beta) | -/+<span style="color:red;">*</span> |          +          | Adds +100 points to the character creation menu                                                                                                                                                                                                                |
-| Set Max Default Skill       |                  +                   |          +          | Sets the character's standard skills to the maximum level                                                                                                                                                                                                      |
-| Get Admin Access            | -<span style="color:red;">**</span>  |          +          | Obtaining administrator rights on the server                                                                                                                                                                                                                   |
-| Items Creator               |                  +                   |          +          | The item creation menu, the ability to sort, search, etc.                                                                                                                                                                                                      |
-| Player Editor               |                  +                   |          +          | The character editing menu, the ability to add skills, perks, etc.                                                                                                                                                                                             |
-| Game Debug Menu             | -<span style="color:red;">**</span>  |          +          | Debugging menu, includes setting the local time, etc.                                                                                                                                                                                                          |
+| Function                   |  Working in multiplayer  | Working in a co-op  | Description                                                                                                                                                                                                                                                     |
+|----------------------------|:------------------------:|:-------------------:|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Debug Mode Bypass          |          -/+(*)          |          +          | Allows you to use the developer mode in multiplayer (when starting the game with -debug connection is not possible). When you click the right mouse button, additional menus appear, including changing clothes, repairing cars, teleporting on the map, etc.   |
+| MultiHit Zombie            |            +             |          +          | Enables multi-hit zombie mode                                                                                                                                                                                                                                   |
+| Invisible                  |          -/+(*)          |          +          | Allows you to become invisible to everyone                                                                                                                                                                                                                      |
+| God Mode                   |          -/+(*)          |          +          | Gives immortality to the character                                                                                                                                                                                                                              |
+| No Clip                    |          -/+(*)          |          +          | Ability to pass through walls and objects                                                                                                                                                                                                                       |
+| Unlimited Carry            |            +             |          +          | Enable infinite load capacity, including for third-party containers                                                                                                                                                                                             |
+| Unlimited Endurance        |            +             |          +          | Enable unlimited endurance                                                                                                                                                                                                                                      |
+| Disable Fatigue            |            +             |          +          | Disables the need for sleep                                                                                                                                                                                                                                     |
+| Disable Hunger             |            +             |          +          | Disables the need for food                                                                                                                                                                                                                                      |
+| Disable Thirst             |            +             |          +          | Disables the need for water                                                                                                                                                                                                                                     |
+| Disable Character Needs    |            +             |          +          | Disables all the needs of the character, sets its characteristics to the maximum - positive - level (stress, panic, etc.)                                                                                                                                       |
+| Add x100 Trait Point(beta) |         -/+ (**)         |          +          | Adds +100 points to the character creation menu                                                                                                                                                                                                                 |
+| Game Debugger              |            +             |          +          | Opens the debugging window                                                                                                                                                                                                                                      |
+| Items Creator              |            +             |          +          | The item creation menu, the ability to sort, search, etc.                                                                                                                                                                                                       |
+| Player Editor              |            +             |          +          | The character editing menu, the ability to add skills, perks, etc.                                                                                                                                                                                              |
+| Get Admin Access           |          -/+(*)          |          +          | Obtaining administrator rights on the server                                                                                                                                                                                                                    |
+| Open Admin Menu            |          -/+(*)          |          +          | Opens the admin window                                                                                                                                                                                                                                          |
 
-<span style="color:red;">*</span> - It only works when creating a character from the main menu, that is, points will not be added to the menu after death. Solution: after death, log out of the server and connect again.
+(*) - These functions work in multiplayer, provided that some types of anti-cheats are disabled, otherwise it will kick. As a rule, for servers with mods, some types are disabled, for example, [type 12](https://www.unknowncheats.me/forum/other-mmorpg-and-strategy/522818-project-zomboid-anti-cheat-types.html), but for full operation, [type 8](https://www.unknowncheats.me/forum/other-mmorpg-and-strategy/522818-project-zomboid-anti-cheat-types.html) is required to be disabled
 
-<span style="color:red;">**</span> - It works only if some types of anti-cheats are disabled on the server, for example, type 12 will allow you to get administrator rights. As a rule, anti-cheat is disabled on servers with mods
+(**) - It only works when creating a character from the main menu, that is, points will not be added to the menu after death. Solution: after death, log out of the server and connect again.
+
 
 ## Demo
-![1](demo/1.png)
+![1](demo/1.jpg)
 ![2](demo/2.jpg)
 ![3](demo/3.jpg)
 ![4](demo/4.jpg)
 ![5](demo/5.jpg)
 ![6](demo/6.jpg)
 ![7](demo/7.jpg)
+![8](demo/8.jpg)
+![9](demo/9.jpg)
 
 ## Getting Started
 
@@ -60,36 +73,55 @@ This section will provide information on how to get a local copy of the project 
 ### Prerequisites
 
 This tool requires:
-<<<<<<< HEAD
 
 -   [Java 17](https://www.oracle.com/java/technologies/downloads/) or newer
 -   Steam copy of [Project Zomboid](https://store.steampowered.com/app/108600/Project_Zomboid/)
-=======
-- [Java 17](https://www.oracle.com/java/technologies/downloads/) or newer
-- Steam copy of [Project Zomboid](https://store.steampowered.com/app/108600/Project_Zomboid/)
->>>>>>> eb7da5523c2fd3de18e12c589ebf7c3113a14a41
 
 ### Installation
 
 1. Download and install Java on your computer
-2. Make sure that the path to Java is set in your environment variables (For Windows: `WIN + X -> "System" -> "Advanced System Parameters" -> "Environment Variables" -> Double click on "Path" -> Insert path to java, for example "C:\Program Files\Java\jre-1.8\bin"`)
+2. Make sure that the path to Java is set in your environment variables
+
+(For Windows: `WIN + X` -> `"System"` -> `"Advanced System Parameters"` -> `"Environment Variables"` -> `Double click on "Path"` -> `Insert path to java, for example "C:\Program Files\Java\jdk-20\bin"`)
+
 3. Clone the repository
 4. Open the project in the IDE and build the executable via Gradle `.jar` file
-5. Move the created `.jar` to the root folder of the game (For example, `c:\Steam\steamapps\common\ProjectZomboid`)
-6. Open the console in the root folder and run the following command: `java -jar ./EtherHack-{VERSION}.jar --install`
+5. Move the created `.jar` to the root folder of the game 
 
-`{VERSION}` - Specify your version of the cheat
+(For example, `c:\Steam\steamapps\common\ProjectZomboid`)
 
+6. Open the console in the root folder and run the following command: 
+
+```
+java -jar ./EtherHack-{yourVersion}.jar --install
+```
+
+`{yourVersion}` - Specify your version of the cheat
+
+For example, for release 1.1, the command will look like this:
+```
+java -jar ./EtherHack-1.1.jar --install
+```
 ### Uninstallation
-Open the console in the root folder and run the following command: `java -jar ./EtherHack-{VERSION}.jar --uninstall`
+Open the console in the root folder and run the following command:
+```
+java -jar ./EtherHack-{yourVersion}.jar --uninstall
+```
 
-`{VERSION}` - Specify your version of the cheat
+`{yourVersion}` - Specify your version of the cheat
+
+For example, for release 1.1, the command will look like this:
+```
+java -jar ./EtherHack-1.1.jar --uninstall
+```
 
 ## Usage
 
-After successfully installing the cheat, you need to log in to the game. When loading, no additional labels will appear, however, in the game itself (menu and in the game session) it will be in the lower left corner. The names of the game window will also change.
+After successfully installing the cheat, you need to log in to the game. When loading, the cheat logo will appear in front of the main logo, in the game itself (menu and in the game session) in the lower left corner there will be information about the cheat. The name of the game window will also change.
 
-To open the cheat menu, press the `Insert` key
+To open the cheat menu, press `Insert`
+
+To reload the LuaGUI, press `Home`, but first make sure that all the cheat windows are closed, otherwise an error will appear.
 
 ## For developer
 If you are a developer and want to expand the functionality, you can do it as follows:
@@ -113,7 +145,13 @@ After adding and reassembling the cheat, you will be able to call this method in
 print(yourMethodName());
 --Output log: Test!
 ```
+In addition, you can load third-party Lua in any other Lua through the `EtherRequire` method:
 
+```lua
+EtherRequire "path/to/your.lua"
+```
+
+The path to Lua must be specified relative to the root folder of the game
 ## Contributing
 
 We welcome contributions from the community. If you want to contribute, please fork the repository and create a pull request with your changes.

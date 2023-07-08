@@ -6,6 +6,7 @@ public class EtherMain {
     public EtherHackCredits etherHackCredits;
     public EtherGUI etherGUI;
     public EtherAPI etherAPI;
+    public EtherInitializer etherInitializer;
 
     /**
      * Предотвращение создание экземпляров из вне
@@ -18,8 +19,9 @@ public class EtherMain {
      */
     public void initEther(){
         etherHackCredits = new EtherHackCredits();
+        etherInitializer = new EtherInitializer();
+        etherAPI = new EtherAPI();
         etherGUI = new EtherGUI();
-        etherAPI = etherGUI.etherAPI;
     }
 
     /**

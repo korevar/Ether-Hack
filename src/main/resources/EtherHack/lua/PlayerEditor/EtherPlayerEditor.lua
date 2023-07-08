@@ -542,6 +542,8 @@ function EtherPlayerEditor:onOptionMouseDown(button, x, y)
                 end
             end
         end
+        self:loadPerks();
+        self:loadTraits();
     end
 
     if button.internal == "SEEUSERLOG" then

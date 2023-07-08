@@ -1,4 +1,5 @@
 <h1 align="center">Project-Zomboid-EtherHack</h1>
+<img src="demo/EtherLogo.png" alt="EtherHack Logo">
 <p align="center">
   <img src="https://img.shields.io/github/v/release/Quzile/Project-Zomboid-EtherHack" alt="GitHub release (latest by date)">
   <img src="https://img.shields.io/github/license/Quzile/Project-Zomboid-EtherHack" alt="GitHub">

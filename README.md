@@ -14,6 +14,9 @@ You can watch the cheat [installation video](https://www.youtube.com/watch?v=Olx
 
 Also, if desired, you can provide [support <3](https://www.donationalerts.com/r/quzile)
 
+You can watch the cheat [installation video](https://www.youtube.com/watch?v=Olx7O3HyeZc) and see its main functions in action.
+
+Also, if desired, you can provide [support <3](https://www.donationalerts.com/r/quzile)
 ## Table of Contents
 - [Cheat functionality](#cheat-functionality)
 - [Demo](#demo)
